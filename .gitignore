@@ -1,0 +1,9 @@
+# Data
+!data/.gitkeep
+data/*
+
+# Venv
+.venv/
+
+# MacOS
+.DS_Store
