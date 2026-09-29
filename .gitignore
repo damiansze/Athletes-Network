@@ -1,6 +1,6 @@
 # Data
-!data/.gitkeep
 data/*
+!data/.gitkeep
 
 # Venv
 .venv/
