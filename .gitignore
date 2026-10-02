@@ -1,9 +1,17 @@
-# Data
+# Data (raw + processed via Git LFS, see .gitattributes)
 data/*
 !data/.gitkeep
+!data/raw/
+!data/processed/
 
 # Venv
 .venv/
 
 # MacOS
 .DS_Store
+
+# Other
+Infos/
+# Scraper
+scraper/logs/
+scraper/tmp/
