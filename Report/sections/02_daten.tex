@@ -1,0 +1,104 @@
+% !TeX root = ../main.tex
+\section{Datenbeschaffung und explorative Datenanalyse}
+\label{sec:daten}
+
+\subsection{Datenquelle und Erhebung}
+Der verwendete Scraper entstand 2025 im Rahmen eines anderen Projekts. Mit
+Python und Selenium wurden Mitte 2025 auf
+\href{https://www.swimrankings.net}{swimrankings.net} die TOP100 Listen mit
+bis zu 100 Männern und 100 Frauen je Land sowie deren persönliche
+Bestleistungen erfasst. Die vorliegende
+Arbeit verwendet diese gespeicherten Rohdaten weiter. Eine Zeile entspricht
+einem Bestleistungseintrag und verbindet Athletenmerkmale wie Jahrgang,
+Geschlecht, Nation und Verein mit Disziplin, Beckenlänge, Zeit, Punkten sowie
+Datum, Ort und Wettkampfname.
+
+Das Land der ausgewählten Liste (Listenland) kann von der Nation im
+Athletenprofil (Profilnation) abweichen. Beispielsweise erscheinen Athleten
+mit spanischer Profilnation auch auf portugiesischen Listen. Beim
+Zusammenführen aller Länderlisten können deshalb mehr als 200 Personen
+derselben Profilnation im Datensatz enthalten sein.
+
+Ein ergänzendes Skript sollte 126 vermutete Erhebungsausfälle nachladen.
+Bei diesen Profilen fehlten sowohl Bestleistungen als auch Detailangaben.
+Der im EDA Notebook dokumentierte Versuch scheiterte an Cloudflare
+Prüfungen, obwohl das Skript mit einer manuellen Prüfung im Browser durchgeführt wurde. Es wurden dadurch keine zusätzlichen Daten gewonnen.
+
+\subsection{Bereinigung und Datenqualität}
+Entfernt wurden 1\,688 Zeilen ohne Bestleistungen von 1\,687 Athleten,
+134 exakte Duplikate und der unplausible Quellenwert \texttt{55:55.55}
+über 200\,m Brust. Fehlende Bestleistungen gelten dabei nicht grundsätzlich
+als Erhebungsfehler. Zeiten wurden in Sekunden umgerechnet, Datentypen
+vereinheitlicht und fehlende Angaben erkennbar belassen. Fehlende Orte und
+Wettkampfnamen sind als \texttt{Unknown} markiert. Die kombinierte Profilangabe
+wurde in Nation und Verein aufgeteilt. Listenland und Profilnation bleiben
+erhalten, da sie bei 215 Athleten voneinander abweichen.
+
+Quellenstichproben und Plausibilitätsprüfungen ergänzten die Bereinigung.
+Die auffälligen ungefähren Alterswerte von 6 und 66 Jahren wurden bestätigt und
+beibehalten. Der Parquet Export wurde erneut eingelesen und auf
+Übereinstimmung mit der bereinigten Tabelle geprüft. Tabelle~\ref{tab:datenumfang}
+zeigt den resultierenden Datenumfang. Die einzelnen Prüfungen sind in
+\nolinkurl{Notebooks/01_eda.ipynb} dokumentiert.
+
+\begin{table}[H]
+  \centering
+  \caption{Datenumfang vor und nach der Bereinigung. Eigene Auswertung.}
+  \label{tab:datenumfang}
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    Datenstand & Zeilen & Athleten \\
+    \midrule
+    Rohdaten & 286\,996 & 14\,849 \\
+    Bereinigt & 285\,173 & 13\,162 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Erkenntnisse und Grenzen}
+Für die Auswertung nach Nation zählt jede Athletenkennung einmal und wird
+der Profilnation zugeordnet. Die 13\,162 Athleten verteilen sich auf
+182 Profilnationen. Die Abdeckung
+reicht von einer bis zu 218 Personen pro Nation, der Median beträgt nur 28.
+Männer machen 55,7\,\% und Frauen 44,3\,\% aus. Die 126 vermuteten
+Erhebungsausfälle betreffen 122 Frauen und 4 Männer. Länderanalysen und
+Geschlechtervergleiche können dadurch verzerrt sein. Bei den bekannten
+Geburtsjahrgängen liegt der Median bei 1997, die mittleren 50\,\% liegen
+zwischen 1989 und 2002.
+
+Pro Athlet sind im Median 19 Bestleistungseinträge gespeichert, die mittleren
+50\,\% umfassen 9 bis 34 Einträge. Einzelne Personen sind damit deutlich
+umfangreicher dokumentiert als andere. Die Leistungen verteilen sich mit
+52,0\,\% auf die Langbahn (50\,m) und mit 48,0\,\% auf die Kurzbahn (25\,m).
+Neben vollständigen Strecken sind auch Zwischenzeiten mit dem Zusatz
+\texttt{Lap} enthalten.
+
+Die datierten Einträge reichen vom 17. Oktober 1964 bis zum 8. April 2025.
+Davon stammen 94,7\,\% aus den Jahren ab 2005. Abbildung~\ref{fig:eda}
+zeigt den lokalen Anstieg 2009 und den Einbruch 2020. Ursachen lassen sich
+daraus allein nicht ableiten. Das Jahr 2025 ist nur teilweise erfasst und
+daher nicht direkt mit vollständigen Jahren vergleichbar. Für die weitere
+Modellierung bleiben alle Jahre erhalten.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{02_eda_ueberblick.pdf}
+  \caption{Zeitliche Verteilung und Umfang der gespeicherten Bestleistungen.
+  Links fehlt ein Eintrag ohne Datum. Rechts zählt jeder Athlet einmal.
+  Eigene Auswertung.}
+  \label{fig:eda}
+\end{figure}
+
+Bei 5\,115 Athleten (38,9\,\%) fehlen Vereinsangaben. Auch die Punkte sind
+nicht vollständig: Von 53\,577 Einträgen ohne Punkte entfallen 53\,019 auf
+\texttt{Lap} und 558 auf seltene Kombinationen aus Disziplin und Beckenlänge.
+Diese Lücken bestehen bereits in der Quelle und häufen sich somit bei
+bestimmten Leistungsarten.
+
+Die Auswahl über TOP100 Listen und persönliche Bestleistungen bildet weder
+den gesamten Schwimmsport noch vollständige Wettkampfbiografien ab. Die
+Häufigkeiten beschreiben gespeicherte Bestleistungen und erlauben keine
+direkten Aussagen zur Anzahl aller Wettkampfteilnahmen. Gekürzte und
+wiederholte Wettkampfnamen bleiben erhalten, sind für sich allein aber keine
+eindeutigen Veranstaltungskennungen. Die Datenbasis bleibt auf dem
+Erhebungsstand von 2025.

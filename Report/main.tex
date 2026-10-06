@@ -1,0 +1,68 @@
+% !TeX program = pdflatex
+% !BIB program = biber
+\documentclass{fhnwreport}
+\input{fhnwheader}
+
+\newcommand{\logofilename}{FHNW_HTU_DE}
+\newcommand{\projektteam}{Zephyr Kesseler, Damian Szedalik}
+\newcommand{\abgabedatum}{[Abgabedatum ergänzen]}
+
+\usepackage[backend=biber,style=apa,sortlocale=de_CH]{biblatex}
+\addbibresource{literature/literatur.bib}
+
+\title{Athletes Network\\Soziale Netzwerkanalyse im Schwimmsport}
+\author{Projektarbeit im Modul Soziale Netzwerke}
+\date{\abgabedatum}
+\hypersetup{
+  pdftitle={Athletes Network: Soziale Netzwerkanalyse im Schwimmsport},
+  pdfauthor={\projektteam},
+  pdfsubject={Projektarbeit im Modul Soziale Netzwerke}
+}
+
+\begin{document}
+\selectlanguage{nswissgerman}
+\pagenumbering{roman}
+\maketitle
+\vfill
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+  Projektteam & \projektteam \\[2ex]
+  Modul & Soziale Netzwerke \\[2ex]
+  Studiengang & Data Science \& AI \\[2ex]
+  Hochschule & Fachhochschule Nordwestschweiz
+\end{tabularx}
+\vfill
+\clearpage
+
+\include{sections/00_zusammenfassung}
+\tableofcontents
+\clearpage
+% Aktivieren, sobald entsprechende Abbildungen und Tabellen vorhanden sind.
+% \listoffigures
+% \listoftables
+% \clearpage
+
+\pagenumbering{arabic}
+% Dateinummern ab 03 entsprechen dem Skript. Reportnummern entstehen automatisch.
+% \input vermeidet einen erzwungenen Seitenwechsel bei jedem kurzen Abschnitt.
+\input{sections/01_einleitung}
+\input{sections/02_daten}
+\input{sections/03_modellierung}
+\input{sections/04_reduktion}
+\input{sections/05_communities}
+\input{sections/06_zentralitaet}
+% \input{sections/07_zentralisierung}
+\input{sections/08_netzwerkmetriken}
+\input{sections/09_konnektivitaet}
+\input{sections/10_korrelation}
+\input{sections/11_inferenzstatistik}
+% Optionale Vertiefungen nur bei einer passenden Fragestellung aktivieren.
+% \input{sections/12_link_prediction}
+% \input{sections/13_diffusion}
+% \input{sections/14_graphlets}
+\input{sections/15_fazit}
+
+\clearpage
+\printbibliography[heading=bibintoc,title=Literaturverzeichnis]
+\include{sections/90_eigenstaendigkeit}
+\include{sections/91_anhang}
+\end{document}

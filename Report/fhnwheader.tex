@@ -1,0 +1,37 @@
+\usepackage[english,nswissgerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{csquotes}
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+\usepackage{booktabs,tabularx,longtable}
+\usepackage{listings}
+\usepackage[bottom]{footmisc}
+\usepackage{pdfpages,pdflscape}
+\usepackage{microtype}
+
+\graphicspath{{graphics/}}
+\sisetup{locale=DE}
+\urlstyle{same}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+% Sichtbare Arbeitsnotizen beim Ausarbeiten durch den eigentlichen Text ersetzen.
+\newcommand{\arbeitsnotiz}[1]{\par\noindent{\color{gray}\itshape #1}\par}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  frame=single,
+  captionpos=b
+}
