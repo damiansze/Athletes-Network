@@ -1,6 +1,7 @@
 # Data (raw + processed via Git LFS, see .gitattributes)
 data/*
 !data/.gitkeep
+!data/README.md
 !data/raw/
 !data/processed/
 
@@ -15,3 +16,6 @@ Infos/
 # Scraper
 scraper/logs/
 scraper/tmp/
+
+# Verworfene lokale Entwürfe
+.archive/
