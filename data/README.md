@@ -11,6 +11,8 @@ Grundlage sind die 2025 erhobenen Daten von swimrankings.net. Gespeicherte pers�
 
 `athlete_id` identifiziert eine Person. `nation` bezeichnet die beim Scraping ausgewählte Länderliste, `athlete_nation` die Nation im Athletenprofil.
 
+Wettkampfname, Ort und Beckenlänge enthalten bereits vereinheitlichte Leerzeichen. Leere Angaben und Schreibvarianten wie `UNKNOWN` sind als `Unknown` gespeichert. Diese allgemeine Bereinigung erfolgt in `01_eda.ipynb`, die Zuordnung zu Netzwerken in `02_modellierung.ipynb`.
+
 ## Dateien der Modellierung
 
 Diese Dateien werden von [02_modellierung.ipynb](../Notebooks/02_modellierung.ipynb) unter `processed/networks/` erzeugt. Beide Modelle verwenden alle Jahre.
