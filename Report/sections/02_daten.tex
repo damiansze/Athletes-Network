@@ -28,9 +28,10 @@ Prüfungen, obwohl das Skript mit einer manuellen Prüfung im Browser durchgefü
 Entfernt wurden 1\,688 Zeilen ohne Bestleistungen von 1\,687 Athleten,
 134 exakte Duplikate und der unplausible Quellenwert \texttt{55:55.55}
 über 200\,m Brust. Fehlende Bestleistungen gelten dabei nicht grundsätzlich
-als Erhebungsfehler. Zeiten wurden in Sekunden umgerechnet, Datentypen
-vereinheitlicht und fehlende Angaben erkennbar belassen. Fehlende Orte und
-Wettkampfnamen sind als \texttt{Unknown} markiert. Die kombinierte Profilangabe
+als Erhebungsfehler. Zeiten wurden in Sekunden umgerechnet und Datentypen
+vereinheitlicht. Leerzeichen in Wettkampfnamen, Orten und Beckenlängen
+wurden bereinigt, fehlende Angaben einschliesslich \texttt{UNKNOWN}
+einheitlich als \texttt{Unknown} gespeichert. Die kombinierte Profilangabe
 wurde in Nation und Verein aufgeteilt. Listenland und Profilnation bleiben
 erhalten, da sie bei 215 Athleten voneinander abweichen.
 
@@ -76,7 +77,7 @@ Neben vollständigen Strecken sind auch Zwischenzeiten mit dem Zusatz
 Die datierten Einträge reichen vom 17. Oktober 1964 bis zum 8. April 2025.
 Davon stammen 94,7\,\% aus den Jahren ab 2005. Abbildung~\ref{fig:eda}
 zeigt den lokalen Anstieg 2009 und den Einbruch 2020. Ursachen lassen sich
-daraus allein nicht ableiten. Das Jahr 2025 ist nur teilweise erfasst und
+daraus allein nicht ableiten (wir vermuten jedoch den Einfluss vom Supersuit (2009) und dem Einfluss der Pandemie (2020)). Das Jahr 2025 ist nur teilweise erfasst und
 daher nicht direkt mit vollständigen Jahren vergleichbar. Für die weitere
 Modellierung bleiben alle Jahre erhalten.
 

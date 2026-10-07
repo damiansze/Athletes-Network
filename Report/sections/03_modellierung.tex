@@ -2,4 +2,127 @@
 \section{Modellierung}
 \label{sec:modellierung}
 
-\arbeitsnotiz{Die Modellwahl wird gemeinsam neu festgelegt. Anschliessend werden Fragestellung, Knoten, Kanten, Gewichtung und die wichtigsten Grenzen knapp beschrieben. Die Netzwerktypen aus Kapitel~3 des Skripts dienen als Grundlage \parencite{henninger2024}.}
+Wir modellieren gemeinsame Veranstaltungstage von Athleten und gemeinsame
+Disziplinen ihrer Bestleistungen. Beide Modelle verwenden alle Jahre und
+Geschlechter. Die Beziehungen sind wechselseitig, deshalb sind die Netzwerke
+ungerichtet. Sie fassen die Beobachtungen statisch zusammen.
+
+\subsection{Athleten und Veranstaltungstage}
+Im bipartiten Hauptmodell (Two Mode) verbindet eine Kante einen Athleten mit einem
+Veranstaltungstag, an dem mindestens eine seiner Bestleistungen gespeichert
+ist. Wettkampfname, Ort, Datum und Beckenlänge bestimmen den Tag.
+Mehrtägige Wettkämpfe werden tageweise betrachtet, Kurzbahn und Langbahn
+bleiben getrennt.
+
+Jede Athletenkennung bildet einen Knoten. Mehrere Leistungen am selben
+Veranstaltungstag und Einträge aus mehreren Länderlisten erzeugen keine
+zusätzlichen Kanten. Zwischenzeiten mit \texttt{Lap} bleiben als Beleg für
+einen Veranstaltungstag verwendbar. Für 854 Einträge fehlen notwendige
+Veranstaltungsangaben. Sie werden nur von dieser Zuordnung ausgeschlossen.
+Sechs Athleten haben damit keinen zuordenbaren Tag und entfallen im
+Hauptmodell. Es verbleiben 13\,156 Athleten und 62\,946 Veranstaltungstage.
+
+\subsection{Gewichtete Athletenprojektion}
+Die gewichtete Transformation gemäss \textcite[S.~38]{henninger2024}
+überführt das bipartite Modell in ein Netzwerk mit nur einem Knotentyp (One Mode).
+Zwei Athleten werden verbunden, sobald sie einen Veranstaltungstag teilen.
+Das Kantengewicht zählt ihre verschiedenen gemeinsamen Tage. Für die
+Tagesmengen $T(u)$ und $T(v)$ gilt somit
+$w_{uv}=|T(u)\cap T(v)|$.
+Diese Gewichtung erhält die Häufigkeit gemeinsamer Veranstaltungskontexte
+und ist unmittelbar interpretierbar. Abbildung~\ref{fig:projektion}
+veranschaulicht die Transformation an zwei Tagen in Sarajevo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{03_projektion_sarajevo.pdf}
+  \caption{Bipartites Modell und gewichtete Projektion für zwei
+  Veranstaltungstage des Kup Novi Grad mit acht Athleten. Die Gewichte
+  zählen ausschliesslich gemeinsame Tage im gezeigten Ausschnitt.
+  Unbeschriftete Kanten haben Gewicht 1.
+  Eigene Darstellung.}
+  \label{fig:projektion}
+\end{figure}
+
+Die vollständige Projektion wird aus allen Veranstaltungstagen berechnet.
+Auch die 20 Athleten ohne gemeinsame Tage mit anderen Personen bleiben
+als isolierte Knoten enthalten. Tabelle~\ref{tab:netzwerke} zeigt den Umfang
+der drei gespeicherten Darstellungen.
+
+\begin{table}[H]
+  \centering
+  \caption{Umfang der vollständigen Netzwerke. Eigene Auswertung.}
+  \label{tab:netzwerke}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Netzwerk & Knoten & Kanten & Isolierte Knoten \\
+    \midrule
+    Bipartites Hauptmodell & 76\,102 & 238\,942 & 0 \\
+    Athletenprojektion & 13\,156 & 1\,231\,245 & 20 \\
+    Disziplinennetzwerk & 78 & 2\,265 & 0 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Als Athletenattribute bleiben Name, Geschlecht, Profilnation, Geburtsjahr
+und Verein erhalten, soweit sie vorliegen. Veranstaltungsknoten tragen die
+vier Angaben ihrer Zuordnung.
+
+Die vollständige Darstellung im Notebook ist wegen der vielen überlagerten
+Knoten schwer lesbar. Für Abbildung~\ref{fig:athletenprojektion} wurde das
+Netzwerk deshalb in Gephi angeordnet und anschliessend für die Anzeige
+gefiltert. Es bleiben 135\,353 sichtbare Kanten. Die räumlichen Abstände
+sind vom Layout abhängig und keine exakten Masse für die Stärke einer
+Beziehung. Die Abbildung dient dem Überblick.
+
+\begin{figure}[H]
+  \centering
+  % Nur leere Bildränder ausblenden. Die ursprüngliche PNG Datei bleibt erhalten.
+  \includegraphics[width=\textwidth,trim=0 371 17 627,clip]{Athletes.png}
+  \caption{Gewichtete Athletenprojektion mit ForceAtlas 2. Die Anordnung
+  wurde auf dem vollständigen Netzwerk berechnet und vor dem Filtern
+  gestoppt. Sichtbar sind nur Kanten mit mindestens drei gemeinsamen
+  Veranstaltungstagen. Männer sind blau, Frauen orange.
+  Eigene Darstellung in Gephi.}
+  \label{fig:athletenprojektion}
+\end{figure}
+
+\subsection{Disziplinennetzwerk und Modellgrenzen}
+Im zweiten Modell bildet jede Kombination aus Strecke, Schwimmstil und
+Beckenlänge einen Knoten. Beispielsweise sind 100\,m Freistil auf Kurzbahn
+und Langbahn verschiedene Knoten. Aus der Zuordnung von Athleten zu diesen
+Kombinationen entsteht eine gewichtete Projektion auf die Disziplinen.
+Das Kantengewicht zählt die verschiedenen Athleten mit Bestleistungen in
+beiden Kombinationen. Dafür ist keine gemeinsame Veranstaltung nötig.
+Jeder Athlet zählt je Kombination einmal, Zwischenzeiten mit
+\texttt{Lap} werden ausgeschlossen.
+
+Alle 78 Kombinationen bleiben enthalten, davon sind 29 bei weniger als
+zehn Athleten belegt. Abbildung~\ref{fig:disziplinen} zeigt diese Unterschiede
+in der Abdeckung. Ein konkretes Beispiel für die Gewichtung sind 100\,m
+und 200\,m Freistil auf Langbahn: 8\,503 Athleten sind in beiden Disziplinen
+erfasst, entsprechend beträgt ihr Kantengewicht 8\,503.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{03_disziplinennetzwerk.pdf}
+  \caption{Disziplinennetzwerk mit allen 78 Kombinationen. Die Farben
+  kennzeichnen Schwimmstile, die Beschriftungen Strecke und Beckenlänge.
+  Grössere Knoten stehen für mehr Athleten, kräftigere Kanten für mehr
+  gemeinsame Athleten. Die Reihenfolge am Kreis folgt Schwimmstil und
+  Strecke. Eigene Darstellung.}
+  \label{fig:disziplinen}
+\end{figure}
+
+Aufbau und Prüfungen sind in \nolinkurl{Notebooks/02_modellierung.ipynb}
+dokumentiert. Geprüft wurden unter anderem eindeutige Zuordnungen,
+fehlende Selbstkanten, konkrete Gewichte und deren Gesamtsumme.
+Die Netzwerke und Zuordnungstabellen werden als GEXF und Parquet gespeichert.
+
+Die Modelle beschreiben Zusammenhänge in den ausgewählten Bestleistungsdaten.
+Gemeinsame Tage belegen weder persönliche Bekanntschaft noch direkte
+Wettkämpfe. Abweichende Namen können Verbindungen verdecken, identische
+Kürzungen Veranstaltungen fälschlich zusammenfassen. Jeder Veranstaltungstag
+verbindet in der Projektion alle dort erfassten Athleten. Ein Teil der
+Vernetzung entsteht somit durch die Modellkonstruktion. Disziplinengewichte
+hängen zudem von der Häufigkeit der Disziplinen ab.
