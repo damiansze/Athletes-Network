@@ -77,8 +77,13 @@ Beziehung. Die Abbildung dient dem Überblick.
 
 \begin{figure}[H]
   \centering
+  % Titel und Legende ergänzen den Gephi Export, der beides nicht enthält.
+  {\sffamily\small Athletenprojektion (Gewicht $\geq$ 3)}\\[1ex]
   % Nur leere Bildränder ausblenden. Die ursprüngliche PNG Datei bleibt erhalten.
-  \includegraphics[width=\textwidth,trim=0 371 17 627,clip]{Athletes.png}
+  \includegraphics[width=\textwidth,trim=0 371 17 627,clip]{Athletes.png}\\[1ex]
+  {\sffamily\footnotesize
+  \textcolor[HTML]{367DA2}{\Large\textbullet}~Männer\qquad
+  \textcolor[HTML]{CB7140}{\Large\textbullet}~Frauen}
   \caption{Gewichtete Athletenprojektion mit ForceAtlas 2. Die Anordnung
   wurde auf dem vollständigen Netzwerk berechnet und vor dem Filtern
   gestoppt. Sichtbar sind nur Kanten mit mindestens drei gemeinsamen
