@@ -30,3 +30,29 @@ Ein Veranstaltungstag wird über Wettkampfname, Ort, Datum und Beckenlänge zuge
 Die Spalten `athlete_node`, `event_id` und `discipline_id` der Zuordnungstabellen entsprechen den Knotenkennungen in GEXF. `athlete_id` bleibt die ursprüngliche Personenkennung. Fehlende Knotenattribute, etwa der Verein, werden in GEXF ausgelassen.
 
 Die Regeln zur Erstellung stehen im [Modellierungsplan](../Report/PLAN_MODELLIERUNG.md). Plots werden im Notebook angezeigt und separat für den Report gespeichert.
+
+## Zentralität (Kapitel 6)
+
+[05_zentralitaet.ipynb](../Notebooks/05_zentralitaet.ipynb) liest die bestehende
+Athletenprojektion und filtert ausschliesslich Kanten mit `weight >= 2`.
+Der Export `processed/networks/athlete_communities.parquet` aus Kapitel 5 wird
+unverändert übernommen. Unter `processed/centrality/` entstehen:
+
+| Datei | Inhalt |
+| --- | --- |
+| `actor_centralities.parquet` | Alle Knoten mit Attributen, GC-Indikator, verfügbaren Zentralitäten, Rängen und maximalen verfügbaren FINA-Punkten. Nicht berechnete Masse bleiben fehlend. |
+| `rank_correlations.parquet` | Spearman-Korrelationen der verfügbaren Masse auf derselben GC-Population. |
+| `performance_tests.parquet` | Einseitige monadische Permutationstests mit Effektgrösse, Stichprobengrösse, Seed und Holm-Korrektur. |
+| `group_centralities.parquet` | Group Degree und harmonische Group Closeness der Profilnationen und C1–C4 auf dem gesamten Arbeitsnetz, einschliesslich Gruppengrössen. |
+| `example_athletes.parquet`, `neighbor_communities.parquet` | Prüfung der vier ausgewählten Athleten und ihrer direkten Community-Nachbarschaften; bei verfügbarem Betweenness-Cache zusätzlich dessen Top-Athleten. |
+| `analysis_metadata.json` | Lesbare Eingabefingerprints, Graphbasis, Normalisierungen, Testeinstellungen und Berechnungsstatus. Dieselben Metadaten liegen auch in den Parquet-Tabellen. |
+| `cache/harmonic_exact.parquet`, `cache/betweenness_exact.parquet` | Nur tatsächlich berechnete exakte GC-Werte mit geprüften Graph- und Methodenmetadaten. Eine fehlende Datei bedeutet eine offene Berechnung. |
+
+Im Standardlauf gilt `RECOMPUTE_EXPENSIVE = False`: Ein gültiger Cache wird
+geladen, andernfalls wird das betreffende Mass sichtbar ausgelassen. Zum
+gezielten Berechnen oben im Notebook `RECOMPUTE_EXPENSIVE = True` setzen und
+`EXPENSIVE_MEASURES` beispielsweise auf `('betweenness',)` begrenzen. Exakte
+Betweenness kann lange dauern. Anschliessend die Option wieder auf `False`
+setzen und das Notebook erneut vollständig ausführen. Der Report wird dabei
+nicht automatisch geändert. Die Prüfungen laufen aus dem Projektverzeichnis
+mit `.venv/Scripts/python.exe -m pytest Notebooks/tests/test_centrality_utils.py`.
