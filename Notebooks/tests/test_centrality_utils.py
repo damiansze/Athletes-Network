@@ -7,6 +7,7 @@ expensive calculations on the project's complete athlete network.
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 import sys
 
@@ -26,6 +27,7 @@ from centrality_utils import (  # noqa: E402
     graph_metadata,
     group_centrality,
     load_work_graph,
+    load_analysis_result,
     monadic_permutation_tests,
 )
 
@@ -103,20 +105,123 @@ def test_missing_cache_does_not_start_expensive_computation(graph, tmp_path, mon
     assert not path.exists()
 
 
-def test_valid_cache_roundtrip_preserves_values_and_embedded_metadata(graph, tmp_path, monkeypatch):
-    path = tmp_path / "harmonic.parquet"
-    original, _ = cache_call(graph, path, recompute=True)
+@pytest.mark.parametrize("metric", ["harmonic", "betweenness"])
+def test_valid_cache_roundtrip_preserves_values_and_embedded_metadata(graph, tmp_path, monkeypatch, metric):
+    path = tmp_path / f"{metric}.parquet"
+    original, _ = cache_call(graph, path, metric, recompute=True)
     arrow_table = pq.read_table(path)
     assert b"centrality_metadata" in arrow_table.schema.metadata
 
     def forbidden(*args, **kwargs):
         pytest.fail("Loading a valid cache must not recalculate centrality")
 
-    monkeypatch.setattr(nx, "all_pairs_shortest_path_length", forbidden)
-    loaded, status = cache_call(graph, path)
+    monkeypatch.setattr("centrality_utils._harmonic", forbidden)
+    monkeypatch.setattr(nx, "betweenness_centrality", forbidden)
+    loaded, status = cache_call(graph, path, metric)
 
     assert status["status"] == "loaded"
     pd.testing.assert_series_equal(original, loaded)
+
+
+def save_analysis_fixture(path, graph, frame=None, **metadata_overrides):
+    if frame is None:
+        frame = pd.DataFrame({"degree": [1, 2], "eigenvector": [0.3, 0.4]},
+                             index=pd.Index(["a", "b"], name="node"))
+    metadata = {"graph": graph_metadata(graph, "a" * 64),
+                "community_sha256": "c" * 64}
+    metadata.update(metadata_overrides)
+    table = pa.Table.from_pandas(frame, preserve_index=True)
+    embedded = dict(table.schema.metadata or {})
+    embedded[b"athletes_network_analysis"] = json.dumps(metadata).encode("utf-8")
+    pq.write_table(table.replace_schema_metadata(embedded), path)
+    return frame, metadata
+
+
+def test_saved_analysis_reuses_exact_values_and_metadata_without_calculations(graph, tmp_path, monkeypatch):
+    path = tmp_path / "actors.parquet"
+    original, metadata = save_analysis_fixture(path, graph)
+    original_bytes = path.read_bytes()
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Reusing an analysis result must not run calculations")
+
+    monkeypatch.setattr("centrality_utils._harmonic", forbidden)
+    monkeypatch.setattr(nx, "betweenness_centrality", forbidden)
+    monkeypatch.setattr(nx, "eigenvector_centrality", forbidden)
+    result, status, stored = load_analysis_result(
+        path, metadata["graph"], community_sha256="c" * 64,
+        required_columns=("degree", "eigenvector"),
+    )
+
+    assert status["status"] == "loaded"
+    pd.testing.assert_frame_equal(result, original)
+    assert stored == metadata
+    assert path.read_bytes() == original_bytes
+
+
+@pytest.mark.parametrize("field,new_value", [
+    ("source_sha256", "b" * 64), ("threshold", 3),
+    ("population", "all_nodes"), ("node_sha256", "d" * 64),
+    ("n_nodes", 99), ("n_edges", 99),
+])
+def test_saved_analysis_rejects_every_changed_graph_fingerprint_field(graph, tmp_path, field, new_value):
+    path = tmp_path / "actors.parquet"
+    _, metadata = save_analysis_fixture(path, graph)
+    expected = {**metadata["graph"], field: new_value}
+
+    result, status, stored = load_analysis_result(path, expected)
+
+    assert result is None and stored is None
+    assert status["status"] == "invalid"
+
+
+def test_saved_analysis_checks_community_fingerprint_when_requested(graph, tmp_path):
+    path = tmp_path / "groups.parquet"
+    _, metadata = save_analysis_fixture(path, graph)
+
+    result, status, stored = load_analysis_result(path, metadata["graph"], community_sha256="d" * 64)
+
+    assert result is None and stored is None
+    assert status["status"] == "invalid"
+
+
+def test_saved_analysis_rejects_missing_required_columns(graph, tmp_path):
+    path = tmp_path / "actors.parquet"
+    _, metadata = save_analysis_fixture(path, graph)
+
+    result, status, stored = load_analysis_result(path, metadata["graph"], required_columns=("harmonic",))
+
+    assert result is None and stored is None
+    assert status["status"] == "invalid"
+
+
+@pytest.mark.parametrize("index", [["a", "a"], ["a", None]])
+def test_saved_analysis_rejects_duplicate_or_missing_index(graph, tmp_path, index):
+    path = tmp_path / "actors.parquet"
+    frame = pd.DataFrame({"degree": [1, 2]}, index=pd.Index(index, name="node"))
+    _, metadata = save_analysis_fixture(path, graph, frame)
+
+    result, status, stored = load_analysis_result(path, metadata["graph"])
+
+    assert result is None and stored is None
+    assert status["status"] == "invalid"
+
+
+@pytest.mark.parametrize("contents", [None, b"not parquet", "no_metadata", "invalid_metadata"])
+def test_saved_analysis_missing_or_corrupt_file_is_safe(graph, tmp_path, contents):
+    path = tmp_path / "actors.parquet"
+    if isinstance(contents, bytes):
+        path.write_bytes(contents)
+    elif contents is not None:
+        table = pa.table({"degree": [1, 2]})
+        if contents == "invalid_metadata":
+            table = table.replace_schema_metadata({b"athletes_network_analysis": b"{broken"})
+        pq.write_table(table, path)
+
+    result, status, stored = load_analysis_result(path, graph_metadata(graph, "a" * 64))
+
+    assert result is None and stored is None
+    assert status["status"] == ("missing" if contents is None else "invalid")
 
 
 @pytest.mark.parametrize("change", ["source", "threshold", "population", "nodes"])

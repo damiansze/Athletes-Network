@@ -215,6 +215,42 @@ def expensive_centrality(graph, metric, cache_path, metadata, recompute=False, b
                     "Exact centrality computed after opt-in; cache atomically replaced."}
 
 
+def load_analysis_result(cache_path, expected_graph_metadata, community_sha256=None,
+                         required_columns=()):
+    """Reuse a saved result only when its graph and requested inputs still match.
+
+    This checks the embedded analysis metadata and the table's structure, without
+    calculating any centrality. Callers must additionally validate the values and
+    population appropriate to their result (actors and groups use different rows).
+    ``community_sha256=None`` leaves the optional community fingerprint unchecked.
+    """
+    path = Path(cache_path)
+    if not path.exists():
+        return None, {"status": "missing", "reason": "Saved analysis result missing."}, None
+    try:
+        table = pq.read_table(path)
+        stored = (table.schema.metadata or {}).get(b"athletes_network_analysis")
+        if stored is None:
+            raise ValueError("Embedded analysis metadata missing")
+        metadata = json.loads(stored)
+        if not isinstance(metadata, dict) or metadata.get("graph") != expected_graph_metadata:
+            raise ValueError("Graph fingerprint differs from current source or population")
+        if community_sha256 is not None and metadata.get("community_sha256") != community_sha256:
+            raise ValueError("Community fingerprint differs from current chapter 5 export")
+        frame = table.to_pandas()
+        if not frame.columns.is_unique:
+            raise ValueError("Result columns must be unique")
+        if (isinstance(frame.index, pd.MultiIndex) or not frame.index.is_unique
+                or frame.index.isna().any()):
+            raise ValueError("Result needs a unique, nonmissing one-dimensional index")
+        missing = set(required_columns).difference(frame.columns)
+        if missing:
+            raise ValueError(f"Required result columns missing: {sorted(missing)}")
+    except Exception as error:
+        return None, {"status": "invalid", "reason": f"Saved analysis result rejected: {error}."}, None
+    return frame, {"status": "loaded", "reason": "Validated saved analysis result loaded."}, metadata
+
+
 def group_centrality(graph, members):
     """Compute normalized group degree and harmonic group closeness by one BFS.
 

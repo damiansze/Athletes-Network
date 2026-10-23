@@ -45,6 +45,8 @@ unverändert übernommen. Unter `processed/centrality/` entstehen:
 | `performance_tests.parquet` | Einseitige monadische Permutationstests mit Effektgrösse, Stichprobengrösse, Seed und Holm-Korrektur. |
 | `group_centralities.parquet` | Group Degree und harmonische Group Closeness der Profilnationen und C1–C4 auf dem gesamten Arbeitsnetz, einschliesslich Gruppengrössen. |
 | `example_athletes.parquet`, `neighbor_communities.parquet` | Prüfung der vier ausgewählten Athleten und ihrer direkten Community-Nachbarschaften; bei verfügbarem Betweenness-Cache zusätzlich dessen Top-Athleten. |
+| `betweenness_bridges.parquet` | Zehn höchste exakte Betweenness-Werte mit Rängen und direkten Nachbarzahlen für C1–C4 sowie übrige Communities. |
+| `betweenness_run.json` | Nachweis des exakten Laufs: Methode, Graphfingerprint, Zahl der Quellen, Laufzeit und unveränderter Harmonic-Cache. |
 | `analysis_metadata.json` | Lesbare Eingabefingerprints, Graphbasis, Normalisierungen, Testeinstellungen und Berechnungsstatus. Dieselben Metadaten liegen auch in den Parquet-Tabellen. |
 | `cache/harmonic_exact.parquet`, `cache/betweenness_exact.parquet` | Nur tatsächlich berechnete exakte GC-Werte mit geprüften Graph- und Methodenmetadaten. Eine fehlende Datei bedeutet eine offene Berechnung. |
 
@@ -54,5 +56,7 @@ gezielten Berechnen oben im Notebook `RECOMPUTE_EXPENSIVE = True` setzen und
 `EXPENSIVE_MEASURES` beispielsweise auf `('betweenness',)` begrenzen. Exakte
 Betweenness kann lange dauern. Anschliessend die Option wieder auf `False`
 setzen und das Notebook erneut vollständig ausführen. Der Report wird dabei
-nicht automatisch geändert. Die Prüfungen laufen aus dem Projektverzeichnis
-mit `.venv/Scripts/python.exe -m pytest Notebooks/tests/test_centrality_utils.py`.
+nicht automatisch geändert. Die vorhandenen Degree-, Weighted-Degree- und
+Eigenvector-Werte sowie die Gruppenwerte werden bei passenden Metadaten aus den
+Ergebnisexporten übernommen. Die Prüfungen für Scraper und Analyse laufen aus
+dem Projektverzeichnis mit `.venv/Scripts/python.exe -m pytest`.
