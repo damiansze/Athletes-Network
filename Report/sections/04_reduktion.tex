@@ -21,17 +21,17 @@ Mindestgewichte. Alle 13\,156 Athleten bleiben dabei als Knoten erhalten.
   \includegraphics[width=\textwidth]{04_kantengewichte.pdf}
   \caption{Kantengewichte der Athletenprojektion. A: Anzahl Kanten je
   Zahl gemeinsamer Tage (logarithmische Achse). B: Anteil verbleibender
-  Kanten (blau) und Anteil der Athleten in der grössten Komponente (grau) je
+  Kanten (blau) und Anteil der Athleten in der Giant Component (grau) je
   Mindestgewicht, gepunktet das Arbeitsnetz. Eigene Auswertung.}
   \label{fig:kantengewichte}
 \end{figure}
 
 Als Arbeitsnetz verwenden wir ein Mindestgewicht von zwei gemeinsamen Tagen.
-Es entfernt 71\,\% der Kanten, die grösste Zusammenhangskomponente umfasst
-aber weiterhin 96,6\,\% der Athleten. Die Zahl isolierter Athleten steigt
+Es entfernt 71\,\% der Kanten, die Giant Component, also die grösste
+zusammenhängende Komponente, umfasst aber weiterhin 96,6\,\% der Athleten. Die Zahl isolierter Athleten steigt
 dabei von 20 auf 413. Ab Gewicht 5 liegt mehr als die Hälfte der Athleten
-ausserhalb der grössten Komponente. Gewicht 3 dient nur der Darstellung in
-Abbildung~\ref{fig:athletenprojektion}. Die grösste Komponente des
+ausserhalb der Giant Component. Gewicht 3 dient nur der Darstellung in
+Abbildung~\ref{fig:athletenprojektion}. Die Giant Component des
 Arbeitsnetzes mit 12\,709 Athleten verwenden wir nur für Verfahren, die
 einen zusammenhängenden Graphen voraussetzen. Der Filter bevorzugt Athleten,
 deren Bestleistungen wiederholt an denselben Veranstaltungen erfasst sind.
@@ -66,12 +66,12 @@ Knotenattribut.
 \begin{table}[H]
   \centering
   \caption{Teilnetze nach Geschlecht im Arbeitsnetz. Mittlerer Grad:
-  durchschnittliche Zahl Nachbarn. Grösste Komponente: Anteil der Athleten in
-  der grössten Zusammenhangskomponente. Eigene Auswertung.}
+  durchschnittliche Zahl Nachbarn. Giant Component: Anteil der Athleten des
+  Teilnetzes in dessen Giant Component. Eigene Auswertung.}
   \label{tab:local}
   \begin{tabular}{@{}lrrrrr@{}}
     \toprule
-    Teilnetz & Athleten & Kanten & Density & Mittlerer Grad & Grösste Komponente \\
+    Teilnetz & Athleten & Kanten & Density & Mittlerer Grad & Giant Component \\
     \midrule
     Frauen & 5\,832 & 71\,364 & 0,0042 & 24,5 & 95,3\,\% \\
     Männer & 7\,324 & 117\,326 & 0,0044 & 32,0 & 94,9\,\% \\
@@ -136,8 +136,8 @@ bleiben einzelne Knoten (Local View), alle übrigen Athleten des
 Arbeitsnetzes werden nach Nation zusammengefasst (Global View). Insgesamt
 teilen die Schweizer 70\,\% ihrer gemeinsamen Tage mit Landsleuten, im
 Median pro Athlet sogar 82\,\%. 152 von ihnen sind mit dem Ausland
-verbunden, im Median mit Athleten aus sieben Nationen (mittlere 50\,\%: 4
-bis 15). Einzelne Athleten der internationalen Spitze verbinden die Schweiz
+verbunden, im Median mit Athleten aus sieben Nationen (mittlere 50\,\%
+zwischen 4 und 15). Einzelne Athleten der internationalen Spitze verbinden die Schweiz
 dagegen mit fast hundert Nationen, Noè Ponti mit 97 und Alexandre Haldemann
 mit 89.
 
