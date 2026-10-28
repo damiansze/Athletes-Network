@@ -4,7 +4,7 @@
 \input{fhnwheader}
 
 \newcommand{\logofilename}{FHNW_HTU_DE}
-\newcommand{\projektteam}{Zephyr Kesseler, Damian Szedalik}
+\newcommand{\projektteam}{Zéphyr Kesseler, Damian Szedalik}
 \newcommand{\abgabedatum}{[Abgabedatum ergänzen]}
 
 \usepackage[backend=biber,style=apa,sortlocale=de_CH]{biblatex}
@@ -42,7 +42,7 @@
 % \clearpage
 
 \pagenumbering{arabic}
-% Dateinummern ab 03 entsprechen dem Skript. Reportnummern entstehen automatisch.
+% Dateinummern folgen der Kapitelreihenfolge des Reports.
 % \input vermeidet einen erzwungenen Seitenwechsel bei jedem kurzen Abschnitt.
 \input{sections/01_einleitung}
 \input{sections/02_daten}
@@ -50,16 +50,10 @@
 \input{sections/04_reduktion}
 \input{sections/05_communities}
 \input{sections/06_zentralitaet}
-% \input{sections/07_zentralisierung}
-\input{sections/08_netzwerkmetriken}
-\input{sections/09_konnektivitaet}
-\input{sections/10_korrelation}
-\input{sections/11_inferenzstatistik}
-% Optionale Vertiefungen nur bei einer passenden Fragestellung aktivieren.
-% \input{sections/12_link_prediction}
-% \input{sections/13_diffusion}
-% \input{sections/14_graphlets}
-\input{sections/15_fazit}
+\input{sections/07_zusammenhalt}
+\input{sections/08_assortativitaet}
+\input{sections/09_link_prediction}
+\input{sections/10_fazit}
 
 \clearpage
 \printbibliography[heading=bibintoc,title=Literaturverzeichnis]
