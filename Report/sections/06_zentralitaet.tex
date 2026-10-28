@@ -2,89 +2,79 @@
 \section{Wichtigkeit von Knoten \& Knotengruppen}
 \label{sec:zentralitaet}
 
-\subsection{Graphbasis und Definitionen}
-Wir verwenden das Arbeitsnetz aus Kapitel~\ref{sec:reduktion} mit
-Kantengewicht $\geq 2$: 13\,156 Athleten und 357\,219 Kanten. Alle Knoten
-bleiben erhalten, auch die 413 isolierten Athleten. Degree Centrality ist
-der Grad geteilt durch $N-1$, mit $N=13\,156$; Weighted Degree summiert
-die erhaltenen Kantengewichte ohne Normierung. Eine Veranstaltung kann dabei
-über mehrere Nachbarn mehrfach beitragen. Weighted Degree zählt deshalb
-keine verschiedenen Veranstaltungen.
-
-Die pfadbasierten Aktormasse und Eigenvector Centrality beziehen sich auf
-die Giant Component (GC) mit $n=12\,709$ Athleten. Distanzen und
-Eigenvector werden ungewichtet berechnet. Die Closeness gemäss
-SAN-Definition ist normalisierte Harmonic Centrality:
+Wir messen die Zentralität im Arbeitsnetz mit 13\,156 Athleten und
+357\,219 Kanten. Degree und Weighted Degree berechnen wir für alle Athleten.
+Closeness, Betweenness und Eigenvector setzen einen zusammenhängenden Graphen
+voraus und beziehen sich deshalb auf die Giant Component mit 12\,709
+Athleten. Die Kantengewichte verwenden wir nur beim Weighted Degree, der die
+gemeinsamen Tage mit allen Nachbarn summiert. Für Distanzen eignen sie sich
+nicht, da ein hohes Gewicht eine engere Verbindung bedeutet und keine
+längere Strecke. Die Closeness berechnen wir als normierte Summe der
+inversen Distanzen
 \[
   C_H(v)=\frac{1}{n-1}\sum_{u\ne v}\frac{1}{d(u,v)}.
 \]
-Eigenvector Centrality verwendet den positiven Haupteigenvektor der
-Adjazenzmatrix mit $\sum_v x_v^2=1$. Betweenness summiert für jedes
-ungeordnete Paar anderer Knoten den Anteil kürzester Wege über den Athleten
-und teilt durch $\binom{n-1}{2}$; Endpunkte zählen nicht mit.
-Ausserhalb der GC bleiben diese drei Masse fehlend.
+Prestige-Masse entfallen, da unser Netz ungerichtet ist.
 
-Alle fünf Aktormasse sind berechnet und geprüft. Die exakte Betweenness
-wurde mit dem vollständigen Brandes-Algorithmus in NetworkX berechnet:
-alle 12\,709 GC-Knoten als Quellen, ungewichtet und ohne Stichprobe.
-Der Lauf dauerte rund 19 Minuten 40 Sekunden. Die bereits vorhandenen
-Zentralitätswerte wurden unverändert übernommen. Das Notebook lädt gültige
-Parquet-Caches anhand von Datenfingerprint, Threshold, Population, Methode
-und Bibliotheksversionen. Im geprüften Standardlauf wurden beide teuren
-Masse sowie die Basis- und Gruppenwerte geladen; teure Neuberechnungen
-waren dabei ausdrücklich gesperrt.
+\subsection{Zentrale Athleten}
+Abbildung~\ref{fig:zentralitaet_athleten} zeigt die fünf höchsten Werte je
+Mass. Den höchsten Degree hat Katinka Hosszú mit 543 Nachbarn, sie erreicht
+auch die höchste Closeness. Ein hoher Degree bedeutet bei uns aber nicht
+viele Wettkämpfe. Hosszú ist an 41 Veranstaltungstagen erfasst, Sheng-Yo
+Ting mit 498 Nachbarn sogar nur an 12. Der Median aller Athleten liegt bei
+16 Tagen. Viele Nachbarn entstehen also durch wenige, aber sehr grosse
+internationale Veranstaltungen.
 
-\subsection{Zentrale Athleten und Community-Grenzen}
-Katinka Hosszú hat mit 543 Nachbarn den höchsten Degree und erreicht auch
-die höchste Harmonic Closeness ($0{,}4332$). Sheng-Yo Ting führt beim
-Weighted Degree mit 1\,433 und beim Eigenvector mit $0{,}1011$.
-Lokale Reichweite und die Verbindung zu ihrerseits zentralen Nachbarn
-heben somit unterschiedliche Athleten hervor
-(Abbildung~\ref{fig:zentralitaet_athleten}). Die fünf höchsten
-Eigenvector-Werte liegen alle in C2, der Generation um 2009 aus
-Kapitel~\ref{sec:communities}. Das Mass betont hier besonders diesen
-dicht vernetzten Teil der Projektion.
+Die Eigenvector-Zentralität ist hoch, wenn die Nachbarn selbst zentral sind.
+Alle zehn höchsten Werte liegen im innersten k-Core aus
+Kapitel~\ref{sec:communities}, also bei Athleten der Weltmeisterschaft 2009
+in Rom. Von den ersten hundert sind es 76\,\%. Darunter sind auffällig viele
+Athleten kleiner Nationen wie Simbabwe, Macau, Namibia oder der Cayman
+Islands. Für sie ist eine Weltmeisterschaft oft der Ort ihrer Bestleistung,
+wodurch sie im dichtesten Teil des Netzes liegen.
 
-Die höchste Betweenness erreicht Chin-Kuei Yang (C2) mit $0{,}01867$,
-gefolgt von Hosszú mit $0{,}01040$ und Hoi-Shun Au (C1) mit $0{,}00826$.
-Au hat nur 156 Nachbarn und liegt beim Degree auf Rang 690, bei
-Betweenness dagegen auf Rang 3. Die Vermittlung auf kürzesten Wegen kann
-somit auch Athleten hervorheben, deren lokale Nachbarschaft deutlich
-kleiner ist als die der Degree-Spitze.
-
-\begin{figure}[!htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{06_zentralitaet_athleten.pdf}
-  \caption{Je fünf höchste Werte aller fünf Aktormasse. Degree und
-  Weighted Degree: alle Knoten; Harmonic, Betweenness und Eigenvector:
-  Giant Component. Die Skalen folgen den unterschiedlichen Definitionen.
-  Unten rechts: Anteile direkter Nachbarn der fünf Betweenness-Spitzen in
-  C1--C4 und in den übrigen Communities. Eigene Auswertung.}
+  \caption{Die fünf höchsten Werte je Mass. Degree und Weighted Degree für
+  alle Athleten, die übrigen Masse für die Giant Component. Unten rechts
+  die direkten Nachbarn der fünf Athleten mit der höchsten Betweenness nach
+  Community. Eigene Auswertung.}
   \label{fig:zentralitaet_athleten}
 \end{figure}
 
-Tabelle~\ref{tab:zentralitaet_beispiele} prüft die vier vorgeschlagenen
-Beispiele anhand ihrer tatsächlichen Werte. Michael Phelps liegt bei
-keinem Mass unter den ersten 100; bei Betweenness erreicht er Rang 1\,376.
-László Cseh ist nach Betweenness (23) und Harmonic (28) deutlich höher
-eingeordnet als nach Degree (131). Martina Moravcová Valko liegt in C4
-und erreicht bei Betweenness Rang 5, trotz Degree-Rang 517 und
-Harmonic-Rang 1\,243. Betweenness macht hier eine Vermittlungsposition
-sichtbar, die der Degree allein nicht erkennen lässt. Solche Unterschiede sind keine
-Bewertung der sportlichen Laufbahn, sondern beziehen sich auf die
-Verknüpfung der erfassten Bestleistungen.
+Die Betweenness misst, wie oft ein Athlet auf kürzesten Wegen zwischen
+anderen liegt. Die höchsten Werte haben Chin-Kuei Yang (0,0187), Hosszú
+(0,0104) und Hoi-Shun Au (0,0083). Au hat nur 156 Nachbarn und liegt beim
+Degree auf Rang 690. Alle zehn Athleten mit der höchsten Betweenness haben
+Nachbarn in mindestens drei der vier Generationen aus
+Kapitel~\ref{sec:communities}. Yang verbindet vor allem C2 (375 Nachbarn)
+mit der älteren C4 (135), Martina Moravcová Valko ebenso C4 (94) mit C2
+(80). Jan Sefl verbindet dagegen die fast vollständig tschechische
+Community C32 mit den internationalen Generationen. Von seinen 219 Nachbarn
+liegen 132 in C1 bis C3. Hohe Betweenness kennzeichnet somit Athleten an
+den Übergängen zwischen Generationen oder zwischen nationaler und
+internationaler Ebene.
+
+Tabelle~\ref{tab:zentralitaet_beispiele} ordnet vier bekannte Athleten ein.
+Michael Phelps liegt bei keinem Mass unter den ersten 100 und bei der
+Betweenness nur auf Rang 1\,376. Von seinen 168 Nachbarn liegen 155 in C2,
+eine Brücke zwischen Generationen ist er im Netz also nicht. László Cseh
+liegt dagegen bei Betweenness (Rang 23) und Closeness (28) deutlich höher
+als beim Degree (131). Moravcová Valko erreicht bei der Betweenness sogar
+Rang 5, beim Degree nur Rang 517.
 
 \begin{table}[H]
   \centering
-  \caption{Geprüfte Beispiele: Werte, in Klammern jeweiliger Rang.
-  Degree als Nachbarzahl; dessen Rang entspricht dem der Degree Centrality.
-  Gleiche Werte erhalten denselben kleinsten Rang. Eigene Auswertung.}
+  \caption{Vier ausgewählte Athleten. Werte und in Klammern der Rang, gleiche
+  Werte erhalten denselben Rang. C: Community aus Kapitel~\ref{sec:communities}.
+  Eigene Auswertung.}
   \label{tab:zentralitaet_beispiele}
   \small
   \setlength{\tabcolsep}{2.5pt}
   \begin{tabular}{@{}lcrrrrr@{}}
     \toprule
-    Athlet & C & Degree & Gewichtet & Harmonic & Betweenness & Eigenvector \\
+    Athlet & C & Degree & Gewichtet & Closeness & Betweenness & Eigenvector \\
     \midrule
     Katinka Hosszú & 3 & 543 (1) & 1\,398 (2) & 0,4332 (1) & 0,01040 (2) & 0,0727 (26) \\
     Michael Phelps & 2 & 168 (583) & 383 (809) & 0,3633 (855) & 0,00045 (1\,376) & 0,0295 (291) \\
@@ -94,154 +84,84 @@ Verknüpfung der erfassten Bestleistungen.
   \end{tabular}
 \end{table}
 
-Die Ranglisten stimmen teilweise stark überein. Auf allen 12\,709
-GC-Athleten beträgt Spearmans $\rho$ zwischen Degree und Weighted Degree
-$0{,}963$, zwischen Degree und Eigenvector dagegen $0{,}560$.
-Harmonic hängt sowohl mit Degree ($0{,}805$) als auch mit Eigenvector
-($0{,}772$) zusammen. Betweenness korreliert mit Degree mit $0{,}724$,
-mit Weighted Degree mit $0{,}645$, mit Harmonic mit $0{,}725$ und mit
-Eigenvector mit $0{,}563$. Mehr Nachbarn, kurze Wege und Vermittlung gehen
-häufig gemeinsam einher, die Rangfolgen sind aber nicht austauschbar.
+Die Masse hängen zusammen, sind aber nicht austauschbar. Die Rangkorrelation
+nach Spearman reicht von 0,96 zwischen Degree und Weighted Degree bis 0,47
+zwischen Weighted Degree und Eigenvector. Alle Werte beschreiben gemeinsame
+Veranstaltungstage gespeicherter Bestleistungen. Hohe Zentralität zeigt
+deshalb, an welchen Veranstaltungen ein Athlet seine Bestleistungen
+erzielte, und keine persönlichen Kontakte.
 
-Die unveränderten Community-Zuordnungen aus Kapitel~\ref{sec:communities}
-zeigen, welche Generationen direkt an die Betweenness-Spitze anschliessen.
-Alle zehn höchsten Betweenness-Werte gehören zu Athleten mit Nachbarn in
-mindestens drei Generationen, drei davon erreichen alle vier.
-Yangs Nachbarschaft liegt vor allem in C2 (375) und der älteren C4 (135),
-ergänzt um 19 Athleten in C3 und fünf in den übrigen Communities; C1
-erreicht er nicht direkt. Moravcová Valko verbindet in ihrer direkten
-Nachbarschaft ebenfalls besonders C4 (94) mit C2 (80), bei je einem
-weiteren Nachbarn in C3 und ausserhalb C1--C4. Das passt zur zeitlichen
-Abfolge C4, C2, C3, C1 aus Kapitel~\ref{sec:communities}.
+\subsection{Leistung und Zentralität}
+Sind stärkere Schwimmer zentraler? Als Leistung verwenden wir die maximalen
+FINA-Punkte eines Athleten. Für 12\,708 der 12\,709 Athleten der Giant
+Component liegt ein Punktewert vor. Wir prüfen den Zusammenhang mit einem
+monadischen Permutationstest. Die Nullhypothese lautet, dass Punkte und
+Zentralität nicht zusammenhängen. Dazu werden die Punkte 9\,999-mal
+zufällig auf die Athleten verteilt, Netzwerk und Zentralitäten bleiben
+unverändert. Teststatistik und Effektgrösse ist die Rangkorrelation $\rho$
+nach Spearman, das Signifikanzniveau beträgt $\alpha = 0{,}05$.
 
-Hosszú hat hingegen besonders viele Nachbarn in C2 (216) und C3 (247).
-Ihre direkten Kontakte zu C1 (3) und C4 (1) sind zahlenmässig klein;
-76 Nachbarn liegen in den übrigen Communities. Au erreicht C1 (67),
-C2 (38), C3 (29) und C4 (1), dazu 21 Nachbarn ausserhalb dieser vier
-Gruppen. Die Brückenrolle kann zudem die Anbindung einer nationalen
-Community betreffen: Jan Sefl liegt mit Betweenness-Rang 7 in der fast
-vollständig tschechischen C32. Von seinen 219 Nachbarn liegen 132 in
-C1--C3, 60 in C32 und 27 in weiteren Communities. Bei Phelps liegen
-dagegen 155 seiner 168 Nachbarn in C2; seine Betweenness ist wesentlich
-niedriger.
+Alle fünf Zusammenhänge sind positiv
+(Abbildung~\ref{fig:zentralitaet_leistung}). Am stärksten sind sie bei der
+Closeness ($\rho = 0{,}36$) und der Betweenness (0,33), es folgen
+Eigenvector (0,29), Degree (0,23) und Weighted Degree (0,17). Keine
+Permutation erreicht einen der beobachteten Werte ($p = 0{,}0001$, nach
+Holm-Korrektur für die fünf Tests $p = 0{,}0005$). Stärkere Schwimmer liegen
+also näher am Zentrum des Netzes und häufiger auf kürzesten Wegen. Die
+Effekte sind aber schwach bis mässig.
 
-Hohe Betweenness belegt hier Vermittlung auf kürzesten Wegen im gesamten
-Netzwerk. Die Nachbarschaftsprofile zeigen dazu passende Verbindungen
-zwischen Generationen sowie zwischen nationalen und internationalen
-Gruppen. Die kürzesten Wege selbst wurden jedoch nicht nach den
-Communities ihrer Endpunkte aufgeteilt. Daraus folgt weder ein bestimmter
-Anteil generationenübergreifender Wege noch, dass die Entfernung eines
-Athleten die Gruppen voneinander trennen würde.
-
-\subsection{Maximale FINA-Punkte und Zentralität}
-Pro Athlet verwenden wir den maximalen verfügbaren Punktewert aus der
-bereinigten Leistungstabelle. Fehlende Werte werden nicht durch Null
-ersetzt; unterschiedliche jährliche FINA-Basistabellen werden nicht neu
-vereinheitlicht. Ein GC-Athlet besitzt keinen Punktewert. Die gemeinsame
-Testpopulation umfasst deshalb 12\,708 Athleten mit allen fünf
-Zentralitätsmassen.
-
-Im monadischen Permutationstest bleiben Netzwerk und Zentralitäten fixiert.
-Unter $H_0$ sind die Punktewerte unter den analysierten Athleten
-austauschbar; $H_1$ postuliert einen positiven Zusammenhang mit Zentralität.
-Teststatistik und Effektgrösse sind Spearmans $\rho$ mit mittleren
-Bindungsrängen. Wir permutieren die Punktewerte beziehungsweise ihre
-äquivalenten Ränge 9\,999-mal mit Seed 42 und testen einseitig bei
-$\alpha=0{,}05$. Der Monte-Carlo-$p$-Wert ist
-$(1+b)/(9\,999+1)$, wobei $b$ die Zahl mindestens ebenso grosser
-permutierter Korrelationen bezeichnet.
-
-Alle fünf Zusammenhänge sind positiv: Degree $\rho=0{,}229$,
-Weighted Degree $0{,}165$, Harmonic $0{,}360$, Betweenness $0{,}325$
-und Eigenvector $0{,}293$
-(Abbildung~\ref{fig:zentralitaet_leistung}). Keine Permutation erreicht
-den jeweiligen beobachteten Wert. Es folgt jeweils $p=0{,}0001$,
-nach Holm-Korrektur für die fünf Tests $p=0{,}0005$. Wir verwerfen $H_0$
-für alle fünf Masse. Die Zusammenhänge sind statistisch nachweisbar,
-ihre Stärke bleibt aber begrenzt. Der stärkste Zusammenhang besteht mit kurzen
-Entfernungen im Netzwerk, gefolgt von Betweenness. Höhere maximale
-FINA-Punkte gehen in dieser Auswahl also auch mit stärkerer Vermittlung
-auf kürzesten Wegen einher.
-
-\begin{figure}[!htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{06_zentralitaet_leistung.pdf}
-  \caption{Maximale verfügbare FINA-Punkte und alle fünf Zentralitätsmasse für dieselben
-  12\,708 GC-Athleten. Dunklere Hexagone: mehr Athleten
-  (logarithmische Farbskala); angegeben ist Spearmans $\rho$.
+  \caption{Maximale FINA-Punkte und Zentralität für 12\,708 Athleten der
+  Giant Component. Dunklere Felder enthalten mehr Athleten (logarithmische
+  Farbskala). Betweenness und Eigenvector mit logarithmischer y-Achse.
   Eigene Auswertung.}
   \label{fig:zentralitaet_leistung}
 \end{figure}
 
-Die Datenabdeckung begrenzt diese Interpretation. In der Testpopulation
-liegen je Athlet 2 bis 100 Bestleistungseinträge vor, im Median 20.
-Ihre Zahl korreliert sowohl mit den maximalen Punkten ($\rho=0{,}273$)
-als auch mit Weighted Degree ($0{,}491$). Unterschiedlich umfangreiche
-Daten können somit beide Grössen gemeinsam prägen. Der unstratifizierte
-Test kontrolliert weder Nation noch Generation oder Datenumfang; er belegt
-keinen kausalen Einfluss der Leistung. Die TOP100-Auswahl und der
-Threshold begrenzen zusätzlich die Übertragbarkeit auf andere Athleten.
+Ein Teil des Zusammenhangs kann am Datenumfang liegen. Je Athlet sind 2 bis
+100 Bestleistungen gespeichert, im Median 20. Ihre Zahl korreliert sowohl
+mit den maximalen Punkten ($\rho = 0{,}27$) als auch mit dem Weighted Degree
+(0,49). Der Test belegt deshalb keinen kausalen Einfluss der Leistung.
 
-\subsection{Profilnationen und Generationen als Gruppen}
-Für alle Gruppen verwenden wir dieselbe Basis von $N=13\,156$ Knoten im
-vollständigen Arbeitsnetz. Wie in Kapitel~\ref{sec:reduktion} erfüllen
-tatsächlich 22 Profilnationen die Grenze von mindestens 200 Athleten
-(200 bis 218 Mitglieder). Das Listenland wird nicht als Profilnation
-verwendet. C1--C4 werden unverändert aus dem Export von Kapitel~\ref{sec:communities}
-übernommen.
-
-Mit $d(v,S)=\min_{s\in S}d(v,s)$ lauten die Gruppenmasse
+\subsection{Nationalteams und Generationen}
+Für Gruppen von Athleten verwenden wir Degree und Closeness auf
+Gruppenebene. Mit $d(v,S)$ als Distanz zum nächsten Mitglied der Gruppe $S$
+und $N = 13\,156$ gilt
 \[
   C_D(S)=\frac{|\{v\notin S:d(v,S)=1\}|}{N-|S|},\qquad
-  C_H(S)=\frac{\sum_{v\notin S}1/d(v,S)}{N-|S|}.
+  C_H(S)=\frac{1}{N-|S|}\sum_{v\notin S}\frac{1}{d(v,S)}.
 \]
-Jeder Aussenstehende zählt einmal; unerreichbare Knoten tragen 0 bei und
-bleiben im Nenner. Group Closeness ist also der Mittelwert inverser
-Distanzen zum nächsten Gruppenmitglied. Eine ungewichtete Multi-Source-BFS
-ermittelt beide Masse pro Gruppe in $O(N+M)$ Zeit.
+Der Group Degree ist also der Anteil der Aussenstehenden mit direkter
+Verbindung zur Gruppe, die Group Closeness der Mittelwert ihrer inversen
+Distanzen. Die Group Betweenness lassen wir weg, da sie für ein Netz dieser
+Grösse zu aufwendig ist. Als Gruppen dienen die 22 Nationen mit mindestens
+200 Athleten aus Kapitel~\ref{sec:reduktion} und die Generationen C1 bis C4
+aus Kapitel~\ref{sec:communities}.
 
-Die USA erreichen mit 206 Mitgliedern 2\,905 Aussenstehende direkt
-($C_D=0{,}224$) und führen auch bei Group Closeness ($0{,}581$).
-Japan folgt beim Group Degree mit $0{,}217$. Die Türkei liegt mit
-$0{,}108$ und $0{,}513$ bei beiden Massen am niedrigsten
-(Abbildung~\ref{fig:zentralitaet_gruppen}). Dies ergänzt die starke
-Binnenorientierung einzelner Nationen aus Kapitel~\ref{sec:reduktion}:
-Ähnlich grosse Ländergruppen unterscheiden sich deutlich in ihrer
-beobachteten Reichweite ausserhalb der eigenen Nation.
+Die USA erreichen mit 206 Athleten 2\,905 Aussenstehende direkt
+(Group Degree 0,224) und haben auch die höchste Group Closeness (0,581).
+Japan folgt mit 0,217, die Türkei liegt bei beiden Massen am tiefsten
+(0,108 und 0,513). Der Group Degree hängt stark mit dem nationalen Anteil
+aus Kapitel~\ref{sec:reduktion} zusammen (Spearman $-0{,}82$). Je mehr Tage
+die Athleten einer Nation mit Landsleuten teilen, desto weniger
+Aussenstehende erreicht das Team.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.88\textwidth]{06_zentralitaet_gruppen.pdf}
-  \caption{Gruppen-Zentralität auf demselben vollständigen Arbeitsnetz.
-  Blau: Anteil direkt erreichter Aussenstehender. Orange: mittlere inverse
-  Distanz zur Gruppe. Die Beschriftung nennt die jeweilige Gruppengrösse;
-  unerreichbare Knoten bleiben im Nenner. Eigene Auswertung.}
+  \caption{Group Degree (blau) und Group Closeness (orange) der Nationen mit
+  mindestens 200 Athleten und der Generationen C1 bis C4. In Klammern die
+  Gruppengrösse. Eigene Auswertung.}
   \label{fig:zentralitaet_gruppen}
 \end{figure}
 
-C3 erreicht mit 1\,304 Mitgliedern 4\,876 Aussenstehende direkt
-($C_D=0{,}411$) und hat auch die höchste Group Closeness ($0{,}673$).
-Sie liegt damit vor der grösseren C1 mit 2\,064 Mitgliedern
-($0{,}387$ bzw.\ $0{,}651$). C4 umfasst 1\,175 Athleten und erreicht
-nur 1\,240 Aussenstehende direkt ($0{,}103$; Closeness $0{,}455$).
-Die Generationen sind folglich unterschiedlich stark mit dem übrigen
-Netz verknüpft. Ihre zeitliche Einordnung stammt aus
-Kapitel~\ref{sec:communities}; die Zentralität allein erklärt keine
-Ursache für diese Unterschiede. Gegenüber den Nationen sind C1--C4
-wesentlich grösser. Die Normierung hebt diesen Grösseneffekt nicht auf,
-weshalb daraus keine grössenbereinigte Überlegenheit folgt.
-
-\subsection{Geltungsbereich und Grenzen}
-Group Betweenness wird wegen des Aufwands ausgelassen, gerichtete
-Prestige-Masse wegen des ungerichteten Netzwerks. Die fünf Aktormasse
-einschliesslich exakter Betweenness, ihre Rangkorrelationen, die
-Leistungszusammenhänge und die Community-Nachbarn der Betweenness-Spitze
-sind vollständig ausgewertet. Der Standardlauf liest die gespeicherten
-Ergebnisse; die teure Betweenness muss dafür nicht erneut berechnet werden.
-
-Alle hier berichteten Werte beschreiben gemeinsame Veranstaltungstage
-gespeicherter Bestleistungen. Grosse Tage erzeugen durch die Projektion
-dichte Nachbarschaften. Hohe Zentralität kann deshalb auch die
-Zusammensetzung und Vollständigkeit dieser Daten widerspiegeln. Sie belegt
-weder persönliche Bekanntschaften noch eine vollständige Wettkampf- oder
-Karriereaktivität.
+Bei den Generationen ist C3 am zentralsten. Sie erreicht mit 1\,304
+Athleten 4\,876 Aussenstehende direkt (0,411) und liegt damit vor der
+grösseren C1 (0,387) und C2 (0,348). C3 liegt zeitlich und im Layout von
+Abbildung~\ref{fig:communities} zwischen C2 und C1. Die älteste Generation
+C4 erreicht dagegen nur 1\,240 Aussenstehende (0,103). Ihre Bestleistungen
+stammen vermutlich zu selten von denselben Veranstaltungen wie jene späterer
+Athleten. Da die Generationen deutlich grösser sind als die Nationalteams,
+vergleichen wir die Werte nur innerhalb der beiden Gruppenarten.
