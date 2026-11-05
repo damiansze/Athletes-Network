@@ -1,4 +1,126 @@
 % !TeX root = ../main.tex
+\clearpage
 \section{Link Prediction}
 \label{sec:link_prediction}
-\arbeitsnotiz{Zeitliches Experiment mit Stichjahr. Adamic-Adar, Preferential Attachment und Soundarajan-Hopcroft im Vergleich mit einfachen Faustregeln aus der Assortativität.}
+
+Wir vergleichen vier Netzwerkverfahren mit drei Faustregeln für spätere
+gemeinsame Veranstaltungstage nach dem zeitlichen Experiment von
+\textcite{libenNowellKleinberg2007}.
+
+\subsection{Versuchsaufbau}
+Training sind die Veranstaltungstage von 2016 bis 2019, Test jene von 2021
+bis 2025. Das Jahr 2020 bleibt ausgeschlossen. Der Kern verlangt mindestens
+drei verschiedene Veranstaltungstage in beiden Zeiträumen. Die aktive
+Population ist damit retrospektiv definiert.
+
+Nachbarschaften umfassen alle 7\,024 Trainingsathleten mit 260\,719 Kanten,
+Kandidaten nur unverbundene Kernpaare. Anders als in
+Kapitel~\ref{sec:reduktion} gilt Gewicht $\geq 1$, da schon ein gemeinsamer
+Tag eine bestehende Verbindung belegt. Die Testprojektion entsteht separat.
+Neue Testkanten fehlen im Trainingsfenster, können aber historisch schon
+bestanden haben.
+
+\begin{table}[H]
+  \centering
+  \caption{Datensplit der Hauptanalyse. Trainingskanten beziehen sich auf
+  Paare im Kern. Zufall entspricht neuen Testkanten geteilt durch Kandidaten.
+  Eigene Auswertung.}
+  \label{tab:link_prediction_split}
+  \small
+  \begin{tabular}{@{}rrrrr@{}}
+    \toprule
+    Kernathleten & Trainingskanten & Kandidaten & Neue Testkanten & Zufall \\
+    \midrule
+    3\,017 & 50\,792 & 4\,498\,844 & 121\,753 & 2,706\,\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Die Netzwerk-Scores verwenden ungewichtete Nachbarschaften. Für
+Soundarajan-Hopcroft wird Louvain nur auf dem Trainingsnetz neu bestimmt.
+Die kombinierte Faustregel ordnet zuerst nach gleicher Profilnation und
+innerhalb dieser Gruppen nach Jahrgangsnähe.
+
+Alle Verfahren bewerten dieselben Kandidaten. Precision@K ist der
+Trefferanteil unter den ersten $K=121\,753$ Paaren. Geteilt durch 2,706\,\%
+ergibt sich der Faktor gegenüber Zufall. Gleiche Scores erhalten eine feste
+Zufallsreihenfolge. Zehn Reihenfolgen prüfen deren Einfluss.
+
+\subsection{Ergebnisse und Einordnung}
+Die Nationsregeln übertreffen alle Netzwerkverfahren
+(Abbildung~\ref{fig:link_prediction}). Nation und Jahrgang führen mit
+25,64\,\% Präzision vor Nation mit 25,14\,\% und Soundarajan-Hopcroft
+mit 16,75\,\%.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{09_link_prediction.pdf}
+  \caption{Verfahren auf der x-Achse, Faktor gegenüber Zufall auf der y-Achse.
+  Blau zeigt Netzwerkverfahren, Orange Faustregeln, Grau gestrichelt Faktor 1.
+  Werte gelten für Seed 42. Schwarze Intervalle zeigen die teils kaum sichtbare
+  Spannweite über zehn Reihenfolgen bei gleichen Scores. Eigene Auswertung.}
+  \label{fig:link_prediction}
+\end{figure}
+
+Der Communitybonus verbessert Common Neighbours von 14,76 auf 16,75\,\%.
+Trainingscommunities liefern damit zusätzliche Information, passend zur
+Gruppenstruktur aus Kapitel~\ref{sec:communities}. Preferential Attachment
+erreicht nur 4,76\,\%. Hoher Degree allein genügt trotz zentraler Athleten
+in Kapitel~\ref{sec:zentralitaet} und positiver Degree-Assortativität in
+Kapitel~\ref{sec:assortativitaet} nicht. Viele Nachbarn können durch wenige
+grosse Meisterschaften entstehen.
+
+\begin{table}[H]
+  \centering
+  \caption{Hauptanalyse und zwei Robustheitsprüfungen. Alle Präzisionswerte
+  in Prozent. Wiederholt verlangt mindestens zwei gemeinsame Testtage,
+  Trainingskern mindestens drei Trainingstage ohne Auswahl nach Testaktivität.
+  Jedes Szenario verwendet sein eigenes $K$. Eigene Auswertung.}
+  \label{tab:link_prediction_ergebnisse}
+  \small
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+    & \multicolumn{2}{c}{Hauptanalyse} & Wiederholt & Trainingskern \\
+    Verfahren & Precision@K & Faktor & Precision@K & Precision@K \\
+    \midrule
+    Common Neighbours & 14,76 & 5,45 & 7,45 & 2,85 \\
+    Adamic-Adar & 15,88 & 5,87 & 10,06 & 3,90 \\
+    Preferential Attachment & 4,76 & 1,76 & 0,78 & 0,99 \\
+    Soundarajan-Hopcroft & 16,75 & 6,19 & 12,67 & 5,08 \\
+    Gleiche Nation & 25,14 & 9,29 & 31,19 & 20,30 \\
+    Ähnlicher Jahrgang & 3,76 & 1,39 & 1,05 & 1,41 \\
+    Nation und Jahrgang & 25,64 & 9,47 & 38,69 & 22,57 \\
+    \midrule
+    Zufall & 2,706 & 1,00 & 0,725 & 0,839 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Die hohe Jahrgangsassortativität aus Kapitel~\ref{sec:assortativitaet}
+beschreibt das historische Gesamtnetz. Im bereits nach Aktivität
+ausgewählten Kern hilft Jahrgangsnähe allein wenig. Gleiche Nation ist
+aussagekräftiger, passend zu nationalen Wettkampfangeboten. Über zehn
+Zufallsreihenfolgen erreicht die kombinierte Regel 25,62 bis 25,72\,\%,
+Soundarajan-Hopcroft 16,72 bis 16,76\,\%.
+
+Auch für 32\,636 wiederholte Testverbindungen führen die Nationsregeln
+(Tabelle~\ref{tab:link_prediction_ergebnisse}). Dies passt zu den wiederkehrenden
+Veranstaltungskontexten aus Kapitel~\ref{sec:zusammenhalt}. Der reine
+Trainingskern enthält 5\,594 Athleten, 15\,409\,496 Kandidaten und
+129\,358 neue Testkanten. Die geringere Präzision zeigt die Abhängigkeit von
+der nachträglichen Auswahl aktiver Athleten. Die Nationsregeln bleiben vorn.
+Wegen unterschiedlicher Zielmengen und Zufallsbasen sind die Faktoren
+zwischen den Szenarien nicht direkt vergleichbar.
+
+\subsection{Grenzen}
+Der Bestand enthält persönliche Bestleistungen, keine vollständigen
+Teilnahmeverläufe. Frühere Leistungen können durch spätere Verbesserungen
+verschwinden. Das Jahr 2025 reicht nur bis zum 8. April. Die Profilnation
+stammt aus 2025 und kann historisch gewechselt haben. Fehlende Nationen
+zählen nie als gleich, fehlende Jahrgänge stehen innerhalb ihrer
+Sortiergruppe hinten. Im Hauptkern fehlen beide Attribute nicht.
+Nachträgliche Populationsauswahl und vorab bekanntes $K$ begrenzen die
+prospektive Aussagekraft. Grosse Veranstaltungstage erzeugen durch die
+Projektion dichte Gruppen. Vorhergesagte Kanten stehen für gemeinsame
+Veranstaltungskontexte und nicht für Freundschaften.
+\clearpage
