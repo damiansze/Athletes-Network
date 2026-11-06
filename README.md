@@ -1,41 +1,20 @@
 # Athletes Network
 
-Soziale Netzwerkanalyse im Schwimmsport, Projektarbeit im Modul Soziale Netzwerke
-(FHNW, Data Science). Grundlage sind die TOP100-Listen von
+Soziale Netzwerkanalyse im Schwimmsport, Projektarbeit im Modul Soziale Netzwerke. Grundlage sind die TOP100-Listen von
 [swimrankings.net](https://www.swimrankings.net) mit den persönlichen Bestleistungen
 von über 13'000 Athleten aus 182 Nationen. Zwei Athleten sind verbunden, wenn sie am
 selben Veranstaltungstag eine ihrer Karrierebestzeiten erzielten. Auf diesem Netz
 untersuchen wir Gruppen, zentrale Athleten, Zusammenhalt, Assortativität und
-Link Prediction. Die Ergebnisse stehen im Report.
+Link Prediction.
 
-## Struktur
+Die Nutzung von KI-Werkzeugen ist in `KI-Deklaration.md` dokumentiert.
 
-```
-Athletes-Network/
-├── scraper/      Scraper für swimrankings.net (Selenium) mit Tests
-├── data/         Rohdaten, bereinigte Daten und Netzwerke (Git LFS), siehe data/README.md
-├── Notebooks/    Notebooks 00 bis 09, Hilfsmodule und Tests
-├── Report/       LaTeX-Report, Abbildungen unter Report/graphics
-└── Makefile      Baut den Report
-```
+## Einstieg
 
-## Einrichten
-
-Voraussetzungen sind Python 3.13, [uv](https://docs.astral.sh/uv/) und
-[Git LFS](https://git-lfs.com) für die Daten.
-
-```bash
-git lfs pull
-uv sync
-```
-
-`uv sync` installiert alle Abhängigkeiten, inklusive `ipykernel` zum Ausführen der
-Notebooks.
-
-## Notebooks
-
-Die Notebooks bauen aufeinander auf und werden in dieser Reihenfolge ausgeführt.
-`00_projekt.ipynb` und `09_fazit.ipynb` enthalten nur Text und rahmen die Analysen ein.
+Am besten beginnt man mit `Source/Notebooks/00_projekt.ipynb` und liest die Notebooks der
+Reihe nach. `00_projekt` und `09_fazit` enthalten nur Text und rahmen die Analysen ein.
+Jedes Analyse-Notebook endet mit einem Abschnitt «Erkenntnisse». Der Report unter
+`Report/build/main.pdf` enthält dieselben Inhalte als zusammenhängenden Text. Er ist eine Ergänzung zur Präsentation und muss nicht zusätzlich gelesen werden.
 
 | Notebook | Inhalt | Report-Kapitel |
 | --- | --- | --- |
@@ -50,25 +29,49 @@ Die Notebooks bauen aufeinander auf und werden in dieser Reihenfolge ausgeführt
 | `08_link_prediction.ipynb` | Zeitliches Link-Prediction-Experiment | 9 |
 | `09_fazit.ipynb` | Antworten, Grenzen, Ausblick, Reflexion | 10 |
 
-Die exakte Betweenness in `05_zentralitaet.ipynb` dauert rund 20 Minuten. Das Notebook
-lädt sie deshalb standardmässig aus `data/processed/centrality/cache`. Für eine
+## Struktur
+
+```
+Athletes-Network/
+├── Source/
+│   ├── scraper/      Scraper für swimrankings.net (Selenium)
+│   └── Notebooks/    Notebooks 00 bis 09 und Hilfsmodule
+├── Rohdaten/         Ausgabe des Scrapers
+├── Graphen/          Netzwerke als GEXF, Gephi-Projekt und Zuordnungstabellen
+├── Ergebnisse/       Bereinigte Daten und gespeicherte Auswertungen der Notebooks
+└── Report/           Report als PDF (build/main.pdf) mit LaTeX-Quellen
+```
+
+Rohdaten, Graphen und Ergebnisse beschreiben ihren Inhalt jeweils in einem eigenen README.
+
+## Notebooks ausführen
+
+Alle Notebooks sind bereits ausgeführt und zeigen ihre Ergebnisse. Wer sie neu ausführen
+möchte, braucht Python 3.13 und folgende Pakete:
+
+```bash
+pip install matplotlib networkx numpy pandas pyarrow scipy jupyter
+```
+
+Die Notebooks bauen aufeinander auf und werden in der Reihenfolge 01 bis 08 ausgeführt.
+Closeness und Betweenness in `05_zentralitaet.ipynb` dauern zusammen rund eine halbe
+Stunde. Das Notebook lädt sie deshalb aus `Ergebnisse/centrality/cache`. Für eine
 Neuberechnung oben im Notebook `RECOMPUTE_EXPENSIVE = True` setzen.
 
-## Report bauen
+## Für die Entwicklung
 
-Voraussetzung ist eine LaTeX-Installation mit `latexmk`, `pdflatex` und `biber` sowie
-GNU Make. Im Projektverzeichnis:
-
-```bash
-make            # Report kompilieren
-make rebuild    # vollständiger Neubau
-```
-
-Das PDF entsteht unter `Report/build/main.pdf`. Im Ordner `Report` genügt auch
-`latexmk`.
-
-## Tests
+Im Repository werden Rohdaten, Graphen und Ergebnisse über [Git LFS](https://git-lfs.com)
+versioniert. Die Abhängigkeiten verwaltet [uv](https://docs.astral.sh/uv/), inklusive
+Selenium für den Scraper und `pytest` für die Tests.
 
 ```bash
-uv run pytest
+git clone https://github.com/damiansze/Athletes-Network.git
+cd Athletes-Network
+git lfs pull      # Daten laden, falls Git LFS erst nach dem Klonen installiert wurde
+uv sync           # Abhängigkeiten installieren
+uv run pytest     # Tests
+make              # Report kompilieren (latexmk, pdflatex und biber nötig)
+make rebuild      # Report vollständig neu bauen
 ```
+
+Alle Pfade der Notebooks stehen in `Source/Notebooks/paths.py`.
