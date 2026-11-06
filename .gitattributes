@@ -1,3 +1,5 @@
-data/raw/** filter=lfs diff=lfs merge=lfs -text
-data/processed/** filter=lfs diff=lfs merge=lfs -text
+Rohdaten/** filter=lfs diff=lfs merge=lfs -text
+Graphen/** filter=lfs diff=lfs merge=lfs -text
+Ergebnisse/** filter=lfs diff=lfs merge=lfs -text
+**/README.md -filter -diff -merge text
 Report/build/main.pdf binary

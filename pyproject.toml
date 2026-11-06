@@ -22,5 +22,5 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["scraper"]
-testpaths = ["scraper/tests", "Notebooks/tests"]
+pythonpath = ["Source/scraper"]
+testpaths = ["Source/scraper/tests", "Source/Notebooks/tests"]
