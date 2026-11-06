@@ -1,5 +1,9 @@
 .DEFAULT_GOAL := pdf
 .PHONY: pdf rebuild
 
-pdf rebuild:
-	$(MAKE) -C Report $@
+# Einstellungen für latexmk stehen in Report/.latexmkrc.
+pdf:
+	cd Report && latexmk
+
+rebuild:
+	cd Report && latexmk -g
