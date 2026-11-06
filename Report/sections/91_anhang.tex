@@ -1,8 +1,55 @@
 % !TeX root = ../main.tex
 \appendix
-\section{Ergänzende Materialien}
+\section{Übersicht über Code und Daten}
 \label{app:materialien}
-\arbeitsnotiz{Bei Bedarf zusätzliche Abbildungen, Prüfbeispiele und eine Übersicht der abgegebenen Notebooks und Graphdateien ergänzen.}
+Tabelle~\ref{tab:code_daten} zeigt, wo die Umsetzung und die Ergebnisse
+jedes Kapitels zu finden sind. Alle Pfade beziehen sich auf das
+Projektverzeichnis. Die Abbildungen des Reports exportieren die Notebooks
+nach \nolinkurl{Report/graphics}, die beiden Gephi-Abbildungen entstehen
+aus \nolinkurl{data/processed/networks/Athletes.gephi}.
+
+\begin{table}[H]
+  \centering
+  \caption{Kapitel mit zugehörigem Code und gespeicherten Ergebnissen.}
+  \label{tab:code_daten}
+  \small
+  \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Kapitel & Code & Ergebnisse \\
+    \midrule
+    \ref{sec:einleitung} Einleitung &
+      \nolinkurl{Notebooks/00_projekt.ipynb} &
+      -- \\
+    \ref{sec:daten} Daten &
+      \nolinkurl{scraper/scripts/scrape.py}\newline \nolinkurl{Notebooks/01_eda.ipynb} &
+      \nolinkurl{data/raw/athlete_data_master.csv}\newline \nolinkurl{data/processed/athlete_data_clean.parquet} \\
+    \ref{sec:modellierung} Modellierung &
+      \nolinkurl{Notebooks/02_modellierung.ipynb} &
+      \nolinkurl{data/processed/networks} \\
+    \ref{sec:reduktion} Reduktion &
+      \nolinkurl{Notebooks/03_reduktion.ipynb} &
+      \nolinkurl{data/processed/networks/nations.gexf} \\
+    \ref{sec:communities} Communities &
+      \nolinkurl{Notebooks/04_communities.ipynb} &
+      \nolinkurl{data/processed/networks/athlete_communities.parquet} \\
+    \ref{sec:zentralitaet} Zentralität &
+      \nolinkurl{Notebooks/05_zentralitaet.ipynb}\newline \nolinkurl{Notebooks/centrality_utils.py} &
+      \nolinkurl{data/processed/centrality} \\
+    \ref{sec:zusammenhalt} Zusammenhalt &
+      \nolinkurl{Notebooks/06_zusammenhalt.ipynb} &
+      \nolinkurl{data/processed/zusammenhalt} \\
+    \ref{sec:assortativitaet} Assortativität &
+      \nolinkurl{Notebooks/07_assortativitaet.ipynb} &
+      \nolinkurl{data/processed/assortativitaet} \\
+    \ref{sec:link_prediction} Link Prediction &
+      \nolinkurl{Notebooks/08_link_prediction.ipynb}\newline \nolinkurl{Notebooks/link_prediction_utils.py} &
+      \nolinkurl{data/processed/link_prediction} \\
+    \ref{sec:schluss} Fazit &
+      \nolinkurl{Notebooks/09_fazit.ipynb} &
+      -- \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 \section{Hilfsmittelverzeichnis}
 \label{app:hilfsmittel}

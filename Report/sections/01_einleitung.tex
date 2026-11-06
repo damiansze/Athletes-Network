@@ -3,7 +3,43 @@
 \label{sec:einleitung}
 
 \subsection{Ausgangslage und Ziel}
-\arbeitsnotiz{Thema und Erkenntnisinteresse beschreiben. Kurz erläutern, welchen zusätzlichen Blick eine Netzwerkanalyse auf die Schwimmdaten ermöglicht.}
+Schwimmer messen sich an nationalen Meisterschaften, an internationalen
+Wettkampfserien sowie an Welt- und Europameisterschaften. Ranglisten zeigen,
+wer wie schnell schwimmt. Sie zeigen aber nicht, wer wem an Wettkämpfen
+begegnet und wie sich daraus ein Netz des Schwimmsports bildet. Genau diesen
+Blick ermöglicht die soziale Netzwerkanalyse. Wir verbinden Athleten, die am
+selben Veranstaltungstag eine Bestleistung erzielten, und untersuchen die
+Struktur dieses Netzes.
+
+Grundlage sind die TOP100-Listen von swimrankings.net mit den persönlichen
+Bestleistungen von über 13\,000 Athleten aus 182 Nationen. Erhoben wurden sie
+mit einem Scraper aus einem früheren Projekt (Kapitel~\ref{sec:daten}). Ziel
+ist zu verstehen, wie national oder international der Schwimmsport vernetzt
+ist, welche Athleten und Veranstaltungen das Netz prägen und ob sich künftige
+Begegnungen vorhersagen lassen.
 
 \subsection{Fragestellungen}
-\arbeitsnotiz{Die ausgewählten Fragestellungen präzise formulieren und den Untersuchungsrahmen abgrenzen.}
+Daraus leiten wir fünf Fragen ab.
+\begin{enumerate}
+  \item Wie stark ist das Netz national geprägt, und welche Gruppen bilden
+  sich (Kapitel~\ref{sec:reduktion} und~\ref{sec:communities})?
+  \item Welche Athleten und Nationalteams sind zentral, und sind stärkere
+  Schwimmer zentraler (Kapitel~\ref{sec:zentralitaet})?
+  \item Was hält das Netz zusammen, einzelne Athleten oder grosse
+  Veranstaltungen (Kapitel~\ref{sec:zusammenhalt})?
+  \item Mit wem verbinden sich Athleten bevorzugt
+  (Kapitel~\ref{sec:assortativitaet})?
+  \item Lassen sich künftige Begegnungen aus der Netzwerkstruktur vorhersagen
+  (Kapitel~\ref{sec:link_prediction})?
+\end{enumerate}
+
+Die Untersuchung beschränkt sich auf die gespeicherten Bestleistungen der
+TOP100-Listen mit Stand 2025. Eine Kante bedeutet, dass zwei Athleten am selben Veranstaltungstag eine ihrer Karrierebestzeiten erzielten. Sie belegt weder eine
+persönliche Bekanntschaft noch ein direktes Rennen gegeneinander. Die Netze
+fassen alle Jahre zusammen, nur die Link Prediction trennt zwei Zeiträume.
+Die verwendeten Verfahren und Masse folgen, wo nicht anders angegeben, dem
+Skript von \textcite{henninger2024}.
+Kapitel~\ref{sec:daten} und~\ref{sec:modellierung} beschreiben Daten und
+Modellierung, die Kapitel~\ref{sec:reduktion} bis~\ref{sec:link_prediction}
+die Analysen. Kapitel~\ref{sec:schluss} beantwortet die Fragen und gibt einen
+Ausblick.

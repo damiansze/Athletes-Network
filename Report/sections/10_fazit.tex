@@ -3,7 +3,91 @@
 \label{sec:schluss}
 
 \subsection{Beantwortung der Fragestellungen}
-\arbeitsnotiz{Die zentralen Ergebnisse zusammenführen und die Fragen aus der Einleitung beantworten.}
+\textbf{Nationale Prägung und Gruppen.} Das Netz ist stark national geprägt.
+43,1\,\% der Kanten im Arbeitsnetz verbinden Landsleute, bei zufällig
+verbundenen Athleten wären es 1,2\,\%. Louvain findet eine ausgeprägte
+Community-Struktur mit zwei Typen. Elf grosse Communities bestehen fast nur
+aus einer Nation. Vier grosse internationale Communities trennen sich nach
+Generationen und bilden sich um die Meisterschaften ihrer Zeit, von den
+Europameisterschaften der frühen 2000er-Jahre bis zu den aktuellen
+Weltmeisterschaften.
+
+\textbf{Zentrale Athleten und Teams.} Ein hoher Degree entsteht bei uns
+durch wenige, sehr grosse internationale Veranstaltungen und nicht durch
+viele Wettkämpfe. Hohe Betweenness kennzeichnet Athleten an den Übergängen
+zwischen Generationen oder zwischen nationaler und internationaler Ebene.
+Stärkere Schwimmer sind signifikant zentraler, der Zusammenhang ist mit
+$\rho$ zwischen 0,17 und 0,36 aber schwach bis mässig. Nationalteams, deren
+Athleten sich vor allem mit Landsleuten treffen, erreichen weniger Athleten
+anderer Nationen (Spearman $-0{,}82$).
+
+\textbf{Zusammenhalt.} Wiederholte Begegnungen sind kein Zufall. Das
+Arbeitsnetz enthält rund zehnmal so viele wiederholte Begegnungen wie das
+bipartite Configuration Model. Zusammengehalten wird es von internationalen
+Meisterschaften. Fehlen die internationalsten Veranstaltungstage mit 30\,\%
+der Teilnahmen, bleiben nur 53,7\,\% der Athleten in der Giant Component,
+bei zufälligen Tagen 91,1\,\%. Das Entfernen der zentralsten Athleten
+verändert das Netz dagegen kaum.
+
+\textbf{Bevorzugte Verbindungen.} Am stärksten verbinden sich Gleichaltrige
+($r = 0{,}85$), danach Landsleute ($r = 0{,}42$). Starke Schwimmer treffen
+sich vor allem international untereinander, in der jüngsten Generation am
+deutlichsten. National treffen sich dagegen Gleichaltrige unabhängig von
+ihrem Niveau.
+
+\textbf{Vorhersage.} Netzwerkverfahren sagen neue Begegnungen fünf- bis
+sechsmal besser voraus als der Zufall. Die einfache Regel gleiche Nation ist
+aber noch besser. Unter den aktiven Athleten trifft sich mehr als die
+Hälfte der Landsleute, die sich im Trainingszeitraum nicht begegnet sind,
+im Testzeitraum.
+
+Zusammen ergibt sich ein Netz mit zwei Ebenen. National entsteht ein dichtes,
+wiederkehrendes Netz unter Gleichaltrigen. International verbinden wenige
+grosse Meisterschaften die Nationen und Generationen, und dort treffen sich
+die stärksten Schwimmer.
 
 \subsection{Grenzen, Ausblick und Reflexion}
-\arbeitsnotiz{Die Aussagekraft einordnen, konkrete Erweiterungen nennen und kurz festhalten, was gut lief und was künftig anders gemacht würde.}
+Die Ergebnisse beruhen auf den persönlichen Bestleistungen der TOP100-Listen
+mit Stand 2025. Pro Disziplin ist nur die schnellste Zeit der Karriere gespeichert. Verbessert ein Athlet sie, verschwindet der frühere Tag aus den Daten. Ältere Jahre sind auch deshalb dünner erfasst, besonders vor 2005. Eine Kante zeigt einen gemeinsamen Bestleistungstag und keine persönliche Beziehung, und viele tatsächliche Begegnungen an Wettkämpfen fehlen. Zudem betreffen die 126 fehlenden Profile fast
+nur Frauen, und die Profilnation entspricht dem Stand 2025.
+
+Für eine Weiterführung sehen wir mehrere Ansätze.
+\begin{itemize}
+  \item \textbf{Vollständige Ergebnislisten} statt Bestleistungen würden ein
+  echtes Begegnungsnetz liefern. Eine Kante könnte dann auch ein gemeinsames
+  Rennen oder Finale bedeuten.
+  \item \textbf{Zeitliche Netze pro Saison} würden zeigen, wie sich
+  Generationen bilden, wie Karrieren verlaufen und wie stark die Pandemie
+  2020 das Netz verändert hat.
+  \item \textbf{Netzwerk und Attribute kombiniert} könnten die Link
+  Prediction verbessern, etwa Soundarajan-Hopcroft mit Nationen statt
+  Louvain-Communities.
+  \item \textbf{Vereine als weitere Relation} würden Trainingsgruppen
+  sichtbar machen, sobald die Vereinsangaben vollständiger sind.
+  \item \textbf{Diffusion} könnte untersuchen, wie sich Neuerungen wie die
+  Hightech-Anzüge von 2008 und 2009 über gemeinsame Wettkämpfe ausbreiten.
+  \textbf{Graphlets} könnten die Struktur nationaler Netze vergleichen.
+\end{itemize}
+
+Gut funktioniert hat, die Analysen aufeinander aufzubauen. Befunde wie der
+Kern um die Weltmeisterschaft 2009 oder die nationale Prägung tauchten in
+mehreren Kapiteln wieder auf und liessen sich so gegenseitig prüfen.
+
+Anders machen würden wir vor allem die Datengrundlage. Wir haben einen
+bestehenden Datensatz aus einem früheren Projekt übernommen, der pro
+Disziplin nur die schnellste Zeit der Karriere enthält. Das Netz bildet
+deshalb gemeinsame Bestleistungstage ab und nicht alle Begegnungen an
+Wettkämpfen. Fehlende Profile liessen sich zudem nicht mehr nachladen, da
+Cloudflare den Zugriff blockierte. Mit einer eigenen, auf die Fragestellung
+ausgerichteten Erhebung würden wir vollständige Ergebnislisten der
+Wettkämpfe sammeln.
+
+Methodisch haben wir vor allem aus der Projektion gelernt. Jeder
+Veranstaltungstag erzeugt eine Clique, weshalb Masse wie Clustering, k-Core
+oder ein Vergleich mit dem gewöhnlichen Configuration Model einen passenden
+Bezugspunkt brauchen. Das bipartite Configuration Model würden wir früher
+einsetzen, auch für den Modularity-Test in Kapitel~\ref{sec:communities}.
+Kapitel~\ref{sec:assortativitaet} hat zudem gezeigt, wie leicht
+zusammengefasste Gruppen einen Effekt vortäuschen. Ergebnisse auf
+Teilgruppen zu prüfen, würden wir von Anfang an einplanen.
+
